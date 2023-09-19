@@ -17,8 +17,6 @@ inputs:
     description: The name of the SSH key pair that you want to use to connect to the EC2 instance.
     required: true
 
-
-
 jobs:
   create-ec2-instance:
     runs-on: ubuntu-latest
