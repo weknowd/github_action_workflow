@@ -20,9 +20,10 @@ on:
         required: true
       instance-type:
         description: The instance type that you want to use.
+        default: "t2.micro"
         required: true
       instance-name:
-        description: The name of the SSH key pair that you want to use to connect to the EC2 instance.
+        description: The name of the EC2 instance.
         required: true
 
 jobs:
