@@ -2,21 +2,20 @@ name: Create stop terminate EC2 Instance
 
 on:
   workflow_dispatch:
-
-inputs:
-  action:
-    description: The security group IDs of the security groups that you want to attach to the EC2 instance.
-    required: true
-  ami-id:
-    description: The AMI ID of the Amazon Linux AMI that you want to use.
-    required: true
-  instance-type:
-    description: The instance type that you want to use.
-    required: true
-  instance-name:
-    description: The name of the SSH key pair that you want to use to connect to the EC2 instance.
-    required: true
-
+    inputs:
+      action:
+        description: The security group IDs of the security groups that you want to attach to the EC2 instance.
+        required: true
+      ami-id:
+        description: The AMI ID of the Amazon Linux AMI that you want to use.
+        required: true
+      instance-type:
+        description: The instance type that you want to use.
+        required: true
+      instance-name:
+        description: The name of the SSH key pair that you want to use to connect to the EC2 instance.
+        required: true
+        
 jobs:
   create-ec2-instance:
     runs-on: ubuntu-latest
