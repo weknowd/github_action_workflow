@@ -5,6 +5,11 @@ on:
     inputs:
       action:
         description: The security group IDs of the security groups that you want to attach to the EC2 instance.
+        type: choice
+        options:
+        - "create"
+        - "stop"
+        - "start"
         required: true
       ami-id:
         description: The AMI ID of the Amazon Linux AMI that you want to use.
