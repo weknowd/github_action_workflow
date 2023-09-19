@@ -25,6 +25,9 @@ on:
       instance-name:
         description: The name of the EC2 instance.
         required: true
+      ebs-volumesize:
+        description: EBS Volumesize for EC2 instance
+        required: true
 
 jobs:
   create-ec2-instance:
@@ -51,6 +54,7 @@ jobs:
             --subnet-id ${{ secrets.SUBNET_ID }} \
             --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
             --iam-instance-profile Name=vinoth-ec2-role \
+            --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":${{ inputs.ebs-volumesize}},"VolumeType":"gp2"}}]'
             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${{ inputs.instance-name}}}]'	
       - name: get EC2 Instance ID
         if: ${{ inputs.action == 'stop' }}
