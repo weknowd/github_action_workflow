@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: The security group IDs of the security groups that you want to attach to the EC2 instance.
+        description: Action you want to perform.
         type: choice
         options:
         - "create"
