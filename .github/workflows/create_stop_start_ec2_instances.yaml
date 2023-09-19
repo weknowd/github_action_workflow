@@ -8,6 +8,10 @@ on:
         required: true
       ami-id:
         description: The AMI ID of the Amazon Linux AMI that you want to use.
+        type: choice
+        options:
+        - "ami-04cb4ca688797756f"
+        - "ami-0be0e902919675894"
         required: true
       instance-type:
         description: The instance type that you want to use.
@@ -15,7 +19,7 @@ on:
       instance-name:
         description: The name of the SSH key pair that you want to use to connect to the EC2 instance.
         required: true
-        
+
 jobs:
   create-ec2-instance:
     runs-on: ubuntu-latest
