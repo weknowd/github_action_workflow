@@ -1,1 +1,70 @@
-test
+name: Create stop terminate EC2 Instance
+
+on:
+  workflow_dispatch:
+
+inputs:
+  action:
+    description: The security group IDs of the security groups that you want to attach to the EC2 instance.
+    required: true
+  ami-id:
+    description: The AMI ID of the Amazon Linux AMI that you want to use.
+    required: true
+  instance-type:
+    description: The instance type that you want to use.
+    required: true
+  instance-name:
+    description: The name of the SSH key pair that you want to use to connect to the EC2 instance.
+    required: true
+
+
+
+jobs:
+  create-ec2-instance:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code from git repo branch configure above
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Sets up AWS profile.  
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Create EC2 Instance
+        if: ${{ inputs.action == 'create' }}
+        run: |
+          aws ec2 run-instances \
+            --image-id ${{ inputs.ami-id}} \
+            --instance-type ${{ inputs.instance-type}} \
+            --subnet-id ${{ secrets.SUBNET_ID }} \
+            --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
+            --iam-instance-profile Name=vinoth-ec2-role \
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${{ inputs.instance-name}}}]'	
+      - name: get EC2 Instance ID
+        if: ${{ inputs.action == 'stop' }}
+        id: get-instance-id
+        run: |
+          instance_id=$(aws ec2 describe-instances --filters Name=tag:Name,Values=${{ inputs.instance-name}} --query 'Reservations[*].Instances[*].InstanceId' --output text)
+          echo "::set-output name=instance_id::$instance_id"
+      - name: Stop EC2 instance
+        if: ${{ inputs.action == 'stop' }}
+        run: |
+          instance_id="${{ steps.get-instance-id.outputs.instance_id }}"
+          aws ec2 stop-instances --instance-ids $instance_id
+      - name: get EC2 instance ID
+        if: ${{ inputs.action == 'start' }}
+        id: get-stopped-instance-id
+        run: |
+          instance_id=$(aws ec2 describe-instances --filters Name=tag:Name,Values=${{ inputs.instance-name}} --query 'Reservations[*].Instances[*].InstanceId' --output text)
+          echo "::set-output name=instance_id::$instance_id"
+      - name: start the stopped EC2 instance
+        if: ${{ inputs.action == 'start' }}
+        run: |
+          instance_id="${{ steps.get-stopped-instance-id.outputs.instance_id }}"
+          aws ec2 start-instances --instance-ids $instance_id
+          
