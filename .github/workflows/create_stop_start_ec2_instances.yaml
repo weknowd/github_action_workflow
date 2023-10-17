@@ -55,7 +55,7 @@ jobs:
             --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
             --iam-instance-profile Name=vinoth-ec2-role \
             --block-device-mappings '[{"DeviceName":"/dev/xvda","Ebs":{"VolumeSize":${{ inputs.ebs-volumesize}},"VolumeType":"gp2"}}]' \
-            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${{ inputs.instance-name}}}]'	
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${{ inputs.instance-name}}},{Key=Environment,Value=bioinformatics-dev}]'	
       - name: get EC2 Instance ID
         if: ${{ inputs.action == 'stop' }}
         id: get-instance-id
